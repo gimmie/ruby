@@ -1,10 +1,12 @@
 require 'gimmie_api/version'
 require 'gimmie_api/client'
+require 'gimmie_api/user'
 
 require 'faraday'
 require 'faraday_middleware'
 require 'faraday_middleware/request/oauth'
 require 'json'
+require 'hyperresource'
 
 module GimmieAPI
   class << self

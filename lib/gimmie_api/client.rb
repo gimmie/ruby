@@ -7,9 +7,19 @@ module GimmieAPI
     end
 
     def trigger(event_name, data)
-      uri = URI.parse(GimmieAPI.api_root)
-      uri.path = '/gm/events'
-      rest.post(uri.to_s, event_name: event_name, event_data: data.to_json)
+      rest.post(events_url, event_name: event_name, event_data: data.to_json)
+    end
+
+    def user
+      User.new(root, client: self).fetch
+    end
+
+    def follow_link(hal_link)
+      hal_link.send(:new_resource_from_response, rest.get(hal_link.url))
+    end
+
+    def rest
+      Faraday.new(builder: builder)
     end
 
     private
@@ -31,8 +41,21 @@ module GimmieAPI
       end
     end
 
-    def rest
-      Faraday.new(builder: builder)
+    def hal_root
+      HyperResource.new(
+        root: GimmieAPI.api_root+'/gm/',
+        faraday_options: {
+          builder: builder
+        }
+      )
+    end
+
+    def root
+      @root ||= follow_link(hal_root.to_link)
+    end
+
+    def events_url
+      root.events.url
     end
   end
 end

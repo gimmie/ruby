@@ -11,8 +11,12 @@ module GimmieAPI
       self
     end
 
-    def stamp_cards
+    def owned_stamp_cards
       @user.owned_stamp_cards
+    end
+
+    def owned_rewards
+      @user.owned_rewards
     end
   end
 end

@@ -1,6 +1,6 @@
 # GimmieAPI
 
-Ruby wrapper for the Gimmie API. Currently only sending events are supported.
+Ruby wrapper for the Gimmie API for sending Events and retrieving owned Stamp Cards.
 
 ## Installation
 

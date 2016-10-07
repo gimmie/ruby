@@ -6,12 +6,12 @@ class FakeEventServer
     case request.request_method
     when 'POST'
       if request.params['event_name'] == 'example_event'
-        [201, {"Content-Type" => "application/json"}, [{}.to_json]]
+        [201, {"Content-Type" => "application/json"}, [{"_embedded"=>{"event_results"=>[{name: 'message', message: 'U did it'}]}, "_links"=>{"curies"=>[{"name"=>"gm", "href"=>"http://gimmie.lvh.me:3000/doc/{rel}", "templated"=>true}]}}.to_json]]
       else
-        [404, {"Content-Type" => "application/json"}, [{}.to_json]]
+        [404, {"Content-Type" => "application/json"}, [{'error' => 'not found!'}.to_json]]
       end
     else
-      [404, {}, ["Did you get lost?"]]
+      [404, {}, [{"error" => "Did you get lost?"}.to_json]]
     end
   end
 end
@@ -45,10 +45,15 @@ describe GimmieAPI do
       end
     end
 
-    it 'sends an event successfully' do
+    it 'sends an event and returns results' do
       client = GimmieAPI::Client.new(uid: 'some_uid')
-      resp = client.trigger('example_event', 'example_property_name' => 'example_property_value')
-      expect(resp.status).to eq 201
+      results = client.trigger('example_event', 'example_property_name' => 'example_property_value')
+      expect(results.first.message).to eq 'U did it'
+    end
+
+    it 'raises not found for a misisng event' do
+      client = GimmieAPI::Client.new(uid: 'some_uid')
+      expect { client.trigger('bogus_event', 'example_property_name' => 'example_property_value') }.to raise_error(Faraday::ResourceNotFound)
     end
   end
 end

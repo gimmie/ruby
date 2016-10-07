@@ -1,22 +1,19 @@
 module GimmieAPI
-  class User
-
-    def initialize(root, client:)
-      @root = root
-      @client = client
-    end
-
-    def fetch
-      @user = @client.follow_link(@root.user)
-      self
-    end
-
+  class User < RemoteResource
     def owned_stamp_cards
-      @user.owned_stamp_cards
+      follow_link_to_resource(resource['gm:owned_stamp_cards'], OwnedStampCards)
     end
 
     def owned_rewards
-      @user.owned_rewards
+      follow_link_to_resource(resource['gm:owned_rewards'], OwnedRewards)
+    end
+
+    def owned_points
+      follow_link_to_resource(resource['gm:owned_points'], OwnedPoints)
+    end
+
+    def owned_reward_catalogs
+      follow_link_to_resource(resource['gm:owned_reward_catalogs'], OwnedRewardCatalogs)
     end
   end
 end
